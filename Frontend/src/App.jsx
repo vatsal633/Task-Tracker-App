@@ -9,6 +9,7 @@ import Home from './pages/home'
 import AboutUs from './pages/aboutus'
 import ContactUs from './pages/contectus'
 import Dashboard from './pages/dashboard'
+import Profile from './pages/profile'
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,11 @@ const router = createBrowserRouter([
   {
     path:'/:name/dashboard',
     element:<><Dashboard/></>
+  },
+
+  {
+    path:'/profile',
+    element:<><Profile/></>
   }
 
 ])

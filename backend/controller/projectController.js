@@ -4,7 +4,7 @@ import Project from '../models/project.js';
 export const createProject = async (req, res) => {
     try {
         const { title } = req.body;
-        const email = req.user.email;
+        const email = req.user.email;+++
 
         const newProject = await Project.create({
             user: email,

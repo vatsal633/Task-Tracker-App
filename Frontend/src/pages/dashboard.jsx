@@ -10,7 +10,6 @@ const Dashboard = () => {
       <div className="flex-1 bg-gray-50 p-4 overflow-auto">
         <TopNavBar />
         <ProjectList />
-        <TaskList />
       </div>
     </div>
   );

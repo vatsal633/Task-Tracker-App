@@ -1,14 +1,15 @@
-const TopNavBar = () => {
-    return (
-      <div className="w-full bg-white shadow-md p-4 flex justify-between items-center">
-        <h2 className="text-lg font-semibold">Welcome Back!</h2>
-        <div className="flex gap-4 items-center">
-          <span className="text-gray-600">User</span>
-          <img src="https://via.placeholder.com/32" className="rounded-full" />
-        </div>
+import React from 'react';
+
+const Topbar = () => {
+  return (
+    <div className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
+      <h1 className="text-xl font-semibold">Dashboard</h1>
+      <div className="flex items-center space-x-4">
+        <span className="text-gray-600">Welcome, User</span>
+        <button className="px-3 py-1 bg-blue-600 text-white rounded">Logout</button>
       </div>
-    );
-  };
-  
-  export default TopNavBar;
-  
+    </div>
+  );
+};
+
+export default Topbar;
