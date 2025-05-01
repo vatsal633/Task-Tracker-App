@@ -7,8 +7,6 @@ const Sidebar = () => {
       <h2 className="text-2xl font-bold text-blue-600">WorkSync</h2>
       <nav className="space-y-3">
         <Link to="/dashboard" className="block text-gray-700 hover:text-blue-600">Home</Link>
-        <Link to="/projects" className="block text-gray-700 hover:text-blue-600">Projects</Link>
-        <Link to="/tasks" className="block text-gray-700 hover:text-blue-600">Tasks</Link>
         <Link to="/profile" className="block text-gray-700 hover:text-blue-600">Profile</Link>
       </nav>
     </div>

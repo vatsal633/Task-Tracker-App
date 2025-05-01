@@ -4,9 +4,10 @@ import taskModel from "../models/task.js"
 //for creating tasks
 export const createTask = async (req, res) => {
     try {
-        const { title, description, progressStatus, creationDate, completionDate } = req.body
+        const { user,title, description, progressStatus, creationDate, completionDate } = req.body
 
         const newTask = new taskModel({
+            user,
             title,
             description,
             progressStatus,
@@ -23,8 +24,8 @@ export const createTask = async (req, res) => {
 
 export const getTaskById = async (req, res) => {
     try {
-        const email = req.params
-        const task = await taskModel.findOne({email});
+        const {name} = req.params
+        const task = await taskModel.find({user:name});
 
         if (!task) return res.status(404).json({ message: "Task not found" });
 

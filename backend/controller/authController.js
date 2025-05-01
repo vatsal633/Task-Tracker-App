@@ -22,7 +22,7 @@ export const signin = async (req,res) => {
         const newUser = new userAuth({ name, email, password: hashedPassword, country })
         await newUser.save()  
 
-        const token = jwt.sign({ email: newUser.email }, process.env.JWT_SECRET, { expiresIn: "1h" })
+        const token = jwt.sign({ name: user.name }, process.env.JWT_SECRET)
 
         res.status(200).json({ message: "registration sucess",token })
 
@@ -52,7 +52,7 @@ export const LogIn = async (req,res) => {
             return res.status(401).json({ message: "Invalid password"})
         }
 
-        const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: "1h" })
+        const token = jwt.sign({ name: user.name }, process.env.JWT_SECRET)
 
         res.status(200).json({
             message: "Login successful",

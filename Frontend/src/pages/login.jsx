@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import Navbar from "../components/navbar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Login = () => {
@@ -10,6 +10,10 @@ const Login = () => {
         email: '',
         password: '',
     })
+    const [Error, setError] = useState('')
+    const [Success, setSuccess] = useState('')
+    const [name, setName] = useState('')
+    const navigate = useNavigate()
     const BASEURL = import.meta.env.VITE_BACKEND_URL
 
     const handleChange = (e) => {
@@ -19,17 +23,38 @@ const Login = () => {
         })
     }
 
-    const handleSubmit = async(e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        try{
-            let response = await axios.post(`${BASEURL}/api/auth/login`,formData,{
+
+        try {
+            let response = await axios.post(`${BASEURL}/api/auth/login`, formData, {
                 headers: { "Content-Type": "application/json" },
             })
 
-            console.log(response.data)
-            
-        }catch(err){
+            if (response.status == 200) {
+                setError('')
+                let name = response.data.user.name// storing username to name state
+                let token = response.data.token
+
+                localStorage.setItem("token",JSON.stringify({name,token}))
+                setTimeout(() => {
+                    navigate(`/${name}/dashboard`)//redirecting user to :username/dashboard
+                }, 1000);
+            }
+
+        } catch (err) {
+            if (err.response && err.response.status === 404) {
+                setError(err.response.data.message)
+                
+            }
+            else if (err.response && err.response.status === 401) {
+                setError(err.response.data.message)
+                
+            }
+            else {
+                setError("An unexpected error occurred. Please try again.");
+                
+            }
             console.log(err)
         }
     }
@@ -54,9 +79,7 @@ const Login = () => {
 
                     {/* Email and Password form */}
                     <form className="space-y-6" onSubmit={handleSubmit}>
-                        
-                        
-
+                        <div className="text-center text-red-400">{Error}</div>
                         {/* email */}
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700">

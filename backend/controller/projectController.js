@@ -1,13 +1,13 @@
+import project from '../models/project.js';
 import Project from '../models/project.js';
 
 
 export const createProject = async (req, res) => {
     try {
-        const { title } = req.body;
-        const email = req.user.email;+++
+       const {user,title} = req.body
 
         const newProject = await Project.create({
-            user: email,
+            user ,
             title,
             tasks: [],
         });
@@ -22,9 +22,11 @@ export const createProject = async (req, res) => {
 
 export const getProjects = async (req, res) => {
     try {
-        const projects = await Project.find({ user: req.user.email }).populate("tasks");
+        let user = req.params.name
+         
+        const projects = await Project.find({ user })
+        res.status(200).json({projects}); 
 
-        res.status(200).json({ projects });
     } catch (err) {
         console.error("Error fetching projects:", err);
         res.status(500).json({ message: "Server error" });

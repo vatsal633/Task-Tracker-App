@@ -4,6 +4,6 @@ import { createTask ,getTaskById} from "../controller/taskController.js"
 const router = express.Router()
 
 router.post('/create-task',authenticateJWT,createTask)
-router.get('/get-tasks',authenticateJWT,getTaskById)
+router.get('/:name/get-tasks',getTaskById)
 
 export default router

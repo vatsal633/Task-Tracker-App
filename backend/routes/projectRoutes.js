@@ -3,8 +3,8 @@ import { createProject,getProjects } from '../controller/projectController.js'
 import { authenticateJWT } from '../middleware/authMiddleware.js'
 const router = express()
 
-router.post('/create-projet',authenticateJWT,createProject)
+router.post('/create-project',createProject)
 
-router.get('/get-project',authenticateJWT,getProjects)
+router.get('/:name/get-project',getProjects)
 
 export default router

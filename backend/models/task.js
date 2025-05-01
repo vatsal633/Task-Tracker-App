@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
 
 const taskSchema  = mongoose.Schema({
+    user:String,
     title:String,
     description:String,
-    progressStatus:Number,
+    progressStatus:String,
     creationDate:Date,
     completionDate:Date
 })
