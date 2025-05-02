@@ -7,15 +7,14 @@ const ProtectedRoutes = ({ children }) => {
 
     const isAuthenticated = JSON.parse(localStorage.getItem("token"))
 
-    const storedName = isAuthenticated?.name;
-    const storedToken = isAuthenticated?.token;
+    const storedName = isAuthenticated?.name
+    const storedToken = isAuthenticated?.token
 
     if (!storedToken || !storedName || storedName !== name || !isAuthenticated) {
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/login" replace />
     }
 
     return children
-
 
 }
 export default ProtectedRoutes

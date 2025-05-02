@@ -3,12 +3,12 @@ import Ctabutton from "../ctabutton";
 import Button from "../button";
 import CreateProjectModel from "./createProjectModel";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const ProjectList = () => {
   const [showModal, setShowModal] = useState(false);
   const [Projects, setProjects] = useState([]);
-  
+
   const BASEURL = import.meta.env.VITE_BACKEND_URL;
   const { name } = useParams();
 
@@ -19,7 +19,7 @@ const ProjectList = () => {
         console.log("Fetched titles:", response.data.projects.map(p => p.title));
 
         if (response.status === 200) {
-          setProjects(response.data.projects); 
+          setProjects(response.data.projects);
         }
       } catch (err) {
         console.log(err);
@@ -47,7 +47,9 @@ const ProjectList = () => {
               {project.tasks?.length || 0}/5 Tasks Completed
             </p>
             <div className="flex justify-between mt-4">
-              <Ctabutton link={"/"} name={"view task"} />
+              <Link  to={`/${name}/${project.title}`}>
+                <button className="rounded-md bg-indigo-600 px-6 py-2 text-white hover:bg-indigo-700">View Task</button>
+              </Link>
               <Button link={"/"} name={"add task"} icon={"+"} />
             </div>
           </div>

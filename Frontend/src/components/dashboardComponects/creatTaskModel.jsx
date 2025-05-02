@@ -4,9 +4,12 @@ import axios from "axios"
 const CreateTaskModel = ({ isOpen, onClose }) => {
 
     const [title, setTitle] = useState("")
+
     const [description, setDescription] = useState('')
 
-    const { name } = useParams()
+    const { name } = useParams() //extrect username from url
+    const {projectName} = useParams() //extrect project name  from url
+
     const BASEURL = import.meta.env.VITE_BACKEND_URL
 
     if (!isOpen) return null;
@@ -15,7 +18,7 @@ const CreateTaskModel = ({ isOpen, onClose }) => {
     const handleCreateTask = async () => {
         try {
             const auth = JSON.parse(localStorage.getItem("token"));
-            const token = auth?.token;
+            const token = auth?.token; // chenking token
 
 
             if (!token) {
@@ -23,9 +26,11 @@ const CreateTaskModel = ({ isOpen, onClose }) => {
                 return;
             }
 
+            // creation date
             const creationDate = new Date().toISOString().split("T")[0]
 
-            const formData = { user: name, title, description, progressStatus: "Not Complete", creationDate, completionDate: null }
+            // storing task details in formdata to send req
+            const formData = { user: name,projectName, title, description, progressStatus: "Not Complete", creationDate, completionDate: null }
 
             let res = await axios.post(`${BASEURL}/tasks/create-task`, formData, {
                 headers: {
@@ -33,10 +38,11 @@ const CreateTaskModel = ({ isOpen, onClose }) => {
                     "Authorization": `Bearer ${token}`
                 },
             })
+
             // console.log(formData)
             console.log(res.data)
             console.log("Task created:", res.data);
-            onClose()
+            onClose() // closing model after creating task
         } catch (err) {
             console.log(err)
         }
