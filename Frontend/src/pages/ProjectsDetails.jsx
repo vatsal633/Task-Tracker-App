@@ -2,12 +2,15 @@ import { React, useEffect, useImperativeHandle, useState } from "react";
 import Sidebar from "../components/dashboardComponects/sidebar";
 import TopNavBar from "../components/dashboardComponects/topNavbar";
 import CreateTaskModel from "../components/dashboardComponects/creatTaskModel";
-import { useParams } from "react-router-dom";
+import { UNSAFE_DataRouterStateContext, useParams } from "react-router-dom";
 import axios from "axios";
-import { MdOutlinePreview } from "react-icons/md";
+import { MdOutlinePreview, MdSettingsApplications } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
 import { MdDelete } from "react-icons/md";
-
+import ViewTaskInfo from "../components/dashboardComponects/viewTaskInfo";
+import Loader from "../components/loader";
+import EditTask from "../components/dashboardComponects/editTask";
+import WarningModel from "../components/dashboardComponects/warningModel";
 
 //for tasting
 // const dummyTasks = [
@@ -42,9 +45,7 @@ import { MdDelete } from "react-icons/md";
 //   },
 // ];
 
-const handleViewTask = (title, des) => {
-  console.log(`${title} des:${des}`)
-}
+
 
 const statusColors = {
   "Not Complete": "bg-gray-200 text-gray-800",
@@ -54,14 +55,28 @@ const statusColors = {
 
 const ProjectDetails = () => {
   const [showModal, setShowModal] = useState(false);
+  const [showTaskModal, setShowTaskModal] = useState(false)//for toggling details of task
+  const [selectedTask, setSelectedTask] = useState(null); //
+
+
+  const [editModel,setEditModel] = useState(false)
+  const [showEditModel,setshowEditModel] = useState(false)
+  const [editTask,setEditTask] = useState(null)
+
+  const [warningModel,setWarningModel] = useState(false)
+  const [showWarningModel,setShowWarningModel] = useState(false)
+  const [deleteTask,setDeleteTask] = useState(null)
+
   const { name } = useParams()
   const { projectName } = useParams()
   const [task, setTask] = useState([])
+  const [showLoader, setShowLoader] = useState(false)
   const BASEURL = import.meta.env.VITE_BACKEND_URL
 
   useEffect(() => {
     const getTasksByProject = async () => {
       try {
+        setShowLoader(true)
         const auth = JSON.parse(localStorage.getItem("token"));
         const token = auth?.token; // chenking token
 
@@ -73,9 +88,11 @@ const ProjectDetails = () => {
 
         if (response.status === 200) {
           setTask(response.data)
+          setShowLoader(false)
         }
       } catch (err) {
-        if(err.response && err.response.status === 404){
+        setShowLoader(false)
+        if (err.response && err.response.status === 404) {
           setTask([])
         }
         console.log(err)
@@ -83,8 +100,27 @@ const ProjectDetails = () => {
     }
     getTasksByProject()
   }, [name])
+
+
+
+
+  const openModal = (task) => {
+    setSelectedTask(task);
+    setShowTaskModal(true);
+  };
+
+  const openEditModel = async (task) => {
+    setEditTask(task)
+    setshowEditModel(true)
+  }
+
+  const openWarningModel =(task)=>{
+    setDeleteTask(task)
+    setShowWarningModel(true)
+  }
+
   return (
-    <div className="flex h-screen">
+    <div className="flex  h-screen">
       <Sidebar />
       <div className="flex-1 bg-gray-50 p-8 overflow-auto">
         <TopNavBar />
@@ -96,7 +132,7 @@ const ProjectDetails = () => {
         </div>
 
         <div className="bg-white shadow-md rounded-lg overflow-x-auto">
-          {task.length>0?( <table className="min-w-full divide-y divide-gray-200">
+          {task.length > 0 ? (<table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-100">
               <tr>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Title</th>
@@ -104,11 +140,11 @@ const ProjectDetails = () => {
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Status</th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Created</th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Completed</th>
-                {/* <th className="px-6 py-2 text-left text-sm font-medium text-gray-700">Completed</th> */}
+                <th className="px-6 py-2 text-left text-sm font-medium text-gray-700"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              
+
               {task.map((task, index) => (
                 <tr key={index} className="hover:bg-gray-50">
                   <td className="px-2 py-4 text-sm">{task.title}</td>
@@ -124,15 +160,29 @@ const ProjectDetails = () => {
                       <span className="text-gray-400 italic">Pending</span>
                     )}
                   </td>
-                  <td><div className="text-center  justify-center flex gap-2"><MdOutlinePreview size={20} onClick={() => { handleViewTask(task.title, task.description) }} /><CiEdit size={20} /><MdDelete size={20} /></div></td>
+                  <td><div className="text-center  justify-center flex gap-2">
+                    <MdOutlinePreview size={20} onClick={() => openModal(task)} />
+                    <CiEdit size={20} onClick={()=>{openEditModel(task)}} />
+                    <MdDelete size={20} onClick={()=>{(openWarningModel(task))}} /></div></td>
                 </tr>
               ))}
             </tbody>
-          </table>):(<div className="text-center py-4">No Active Tasks</div>)}
-         
+          </table>) : (<div className="text-center py-4">No Active Tasks</div>)}
+
         </div>
+        {showLoader && (<Loader />)}
+
       </div>
       <CreateTaskModel isOpen={showModal} onClose={() => setShowModal(false)} />
+
+      <ViewTaskInfo
+        isOpen={showTaskModal}
+        onClose={() => setShowTaskModal(false)}
+        task={selectedTask} />
+
+      <EditTask isOpen={showEditModel} onClose={()=>{setshowEditModel(false)}} task={editTask}/>
+
+      <WarningModel isOpen={showWarningModel} onClose={()=>{setShowWarningModel(false)}} task={deleteTask}/>
     </div>
   );
 };

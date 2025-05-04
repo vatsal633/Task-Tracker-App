@@ -16,7 +16,7 @@ const ProjectList = () => {
     const getProjects = async () => {
       try {
         const response = await axios.get(`${BASEURL}/project/${name}/get-project`);
-        console.log("Fetched titles:", response.data.projects.map(p => p.title));
+        // console.log("Fetched titles:", response.data.projects.map(p => p.title));
 
         if (response.status === 200) {
           setProjects(response.data.projects);
@@ -41,16 +41,17 @@ const ProjectList = () => {
 
       {Projects.length > 0 ? (
         Projects.map((project) => (
-          <div key={project._id} className="p-4 bg-white rounded shadow my-2">
-            <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-            <p className="text-sm text-gray-500 mb-2">
-              {project.tasks?.length || 0}/5 Tasks Completed
-            </p>
+          <div key={project._id} className="p-4 bg-white rounded flex justify-between shadow my-2">
+            <div>
+              <h3 className="text-xl font-bold mb-2">{project.title}</h3>
+              <p className="text-sm text-gray-500 mb-2">
+                {project.tasks?.length || 0}/5 Tasks Completed
+              </p>
+            </div>
             <div className="flex justify-between mt-4">
-              <Link  to={`/${name}/${project.title}`}>
+              <Link to={`/${name}/${project.title}`}>
                 <button className="rounded-md bg-indigo-600 px-6 py-2 text-white hover:bg-indigo-700">View Task</button>
               </Link>
-              <Button link={"/"} name={"add task"} icon={"+"} />
             </div>
           </div>
         ))

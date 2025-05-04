@@ -4,7 +4,6 @@ import axios from "axios"
 const CreateTaskModel = ({ isOpen, onClose }) => {
 
     const [title, setTitle] = useState("")
-
     const [description, setDescription] = useState('')
 
     const { name } = useParams() //extrect username from url
@@ -38,11 +37,13 @@ const CreateTaskModel = ({ isOpen, onClose }) => {
                     "Authorization": `Bearer ${token}`
                 },
             })
-
+            if(res.status===201){
+                onClose() // closing model after creating task
+                console.log("Task created:", res.data);
+                console.log(res.data)
+                window.location.reload();
+            }
             // console.log(formData)
-            console.log(res.data)
-            console.log("Task created:", res.data);
-            onClose() // closing model after creating task
         } catch (err) {
             console.log(err)
         }
