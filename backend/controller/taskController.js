@@ -23,7 +23,7 @@ export const createTask = async (req, res) => {
     }
 }
 
-
+//get tasks
 export const getTaskByProject = async (req, res) => {
     try {
         const { name, projectName } = req.params
@@ -43,36 +43,60 @@ export const getTaskByProject = async (req, res) => {
     }
 };
 
-export const editTaskByProject = async(req,res)=>{
-    try{
-        const {NewTitle,NewDescription} = req.body
-        const {name,projectName,taskName} = req.params
-        
-        let originalTask = await taskModel.findOne({user:name,projectName:projectName,title:taskName})
 
-        originalTask.title =  NewTitle
+//edit the task
+export const editTaskByProject = async (req, res) => {
+    try {
+        const { NewTitle, NewDescription } = req.body
+        const { name, projectName, taskName } = req.params
+
+        let originalTask = await taskModel.findOne({ user: name, projectName: projectName, title: taskName })
+
+        originalTask.title = NewTitle
         originalTask.description = NewDescription
 
         await originalTask.save();
-        res.status(202).json({message:"update success"})
-    }catch(err){
+        res.status(202).json({ message: "update success" })
+    } catch (err) {
         console.log(err)
-        res.status(500).json({message:"server error while editing task",err:err.message})
+        res.status(500).json({ message: "server error while editing task", err: err.message })
+    }
+}
+
+//delete task
+export const deleteTask = async (req, res) => {
+    try {
+        const { name, projectName, taskName } = req.params
+
+        let deletedTask = await taskModel.findOneAndDelete({ user: name, projectName: projectName, title: taskName })
+
+
+
+        res.status(200).json({ message: "task delete successfully!", deletedTask })
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ message: "server error while deleting task" })
     }
 }
 
 
-export const deleteTask = async(req,res)=>{
-    try{
-        const {name,projectName,taskName} = req.params
+//update task status
+export const updateStatus = async (req, res) => {
+    try {
+        const { name, projectName, taskName } = req.params
+        const taskCompleteDate= new Date().toISOString().split("T")[0]
 
-        let deletedTask  = await taskModel.findOneAndDelete({user:name,projectName:projectName,title:taskName})
+        const taskDetails = await taskModel.findOneAndUpdate({ user: name, projectName, title: taskName })
 
-        
-        
-        res.status(200).json({message:"task delete successfully!",deletedTask})
-    }catch(err){
+        taskDetails.progressStatus = "Completed"
+        taskDetails.completionDate = taskCompleteDate
+
+
+        res.status(200).json({ message:"status update to completed" })
+        await taskDetails.save();
+    } catch (err) {
         console.log(err)
-        return res.status(500).json({message:"server error while deleting task"})
+        res.status(500).json({ message: "server error while updating task status" })
     }
+
 }

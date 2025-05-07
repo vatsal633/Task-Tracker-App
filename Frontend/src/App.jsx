@@ -43,8 +43,8 @@ const router = createBrowserRouter([
   },
 
   {
-    path:'/profile',
-    element:<><Profile/></>
+    path:'/:name/profile',
+    element:<><ProtectedRoutes><Profile/></ProtectedRoutes></>
   },
   {
     path:'/:name/:projectName',

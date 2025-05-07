@@ -1,4 +1,4 @@
-import { React, useEffect, useImperativeHandle, useState } from "react";
+import { React, useEffect, useRef, useState } from "react";
 import Sidebar from "../components/dashboardComponects/sidebar";
 import TopNavBar from "../components/dashboardComponects/topNavbar";
 import CreateTaskModel from "../components/dashboardComponects/creatTaskModel";
@@ -11,7 +11,8 @@ import ViewTaskInfo from "../components/dashboardComponects/viewTaskInfo";
 import Loader from "../components/loader";
 import EditTask from "../components/dashboardComponects/editTask";
 import WarningModel from "../components/dashboardComponects/warningModel";
-
+import CheckImg from "../assets/checked.png"
+import UnCheckedImg from "../assets/unchecked.png"
 //for tasting
 // const dummyTasks = [
 
@@ -50,7 +51,7 @@ import WarningModel from "../components/dashboardComponects/warningModel";
 const statusColors = {
   "Not Complete": "bg-gray-200 text-gray-800",
   "In Progress": "bg-yellow-200 text-yellow-800",
-  Completed: "bg-green-200 text-green-800",
+  "Completed": "bg-green-200 text-green-800",
 };
 
 const ProjectDetails = () => {
@@ -59,13 +60,16 @@ const ProjectDetails = () => {
   const [selectedTask, setSelectedTask] = useState(null); //
 
 
-  const [editModel,setEditModel] = useState(false)
-  const [showEditModel,setshowEditModel] = useState(false)
-  const [editTask,setEditTask] = useState(null)
+  const [editModel, setEditModel] = useState(false)
+  const [showEditModel, setshowEditModel] = useState(false)
+  const [editTask, setEditTask] = useState(null)
 
-  const [warningModel,setWarningModel] = useState(false)
-  const [showWarningModel,setShowWarningModel] = useState(false)
-  const [deleteTask,setDeleteTask] = useState(null)
+  const [warningModel, setWarningModel] = useState(false)
+  const [showWarningModel, setShowWarningModel] = useState(false)
+  const [deleteTask, setDeleteTask] = useState(null)
+
+
+  const [isChecked, setIsChecked] = useState(false)
 
   const { name } = useParams()
   const { projectName } = useParams()
@@ -73,6 +77,9 @@ const ProjectDetails = () => {
   const [showLoader, setShowLoader] = useState(false)
   const BASEURL = import.meta.env.VITE_BACKEND_URL
 
+  const taskref = useRef()
+
+  //fetching tasks
   useEffect(() => {
     const getTasksByProject = async () => {
       try {
@@ -103,6 +110,34 @@ const ProjectDetails = () => {
 
 
 
+  const handleTaskComplete = async (taskName) => {
+    try {
+      const token = JSON.parse(localStorage.getItem("token"))?.token
+
+      let response = await axios.put(`${BASEURL}/tasks/${name}/${projectName}/${taskName}/update-status`, {}, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+      })
+
+      if (response.status === 200) {
+        console.log(response.data)
+        setIsChecked(!isChecked)
+
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const handleChange = (e) => {
+    console.log(e.target)
+  }
+
+  const classname = (e) => {
+    console.log(e.target.className)
+  }
 
   const openModal = (task) => {
     setSelectedTask(task);
@@ -114,7 +149,7 @@ const ProjectDetails = () => {
     setshowEditModel(true)
   }
 
-  const openWarningModel =(task)=>{
+  const openWarningModel = (task) => {
     setDeleteTask(task)
     setShowWarningModel(true)
   }
@@ -138,16 +173,28 @@ const ProjectDetails = () => {
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Title</th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Description</th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Status</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Created</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Completed</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Created On</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Completed On</th>
                 <th className="px-6 py-2 text-left text-sm font-medium text-gray-700"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
 
               {task.map((task, index) => (
+
                 <tr key={index} className="hover:bg-gray-50">
-                  <td className="px-2 py-4 text-sm">{task.title}</td>
+                  <td className="px-2 py-4 text-sm flex" onChange={handleChange}>
+
+                    <img
+                      src={(isChecked || task.progressStatus === "Completed") ? CheckImg : UnCheckedImg}
+                      width={20}
+                      alt={task.progressStatus === "Completed" ? "Completed" : "Not Completed"}
+                      className="cursor-pointer"
+                      onClick={() => handleTaskComplete(task.title)}
+                    />
+
+                    {task.title}
+                  </td>
                   <td className="px-2 py-4 text-sm">{task.description}</td>
                   <td className="px-2 py-4">
                     <span className={`px-3 py-1 rounded-full text-sm font-semibold ${statusColors[task.progressStatus]}`}>
@@ -162,8 +209,8 @@ const ProjectDetails = () => {
                   </td>
                   <td><div className="text-center  justify-center flex gap-2">
                     <MdOutlinePreview size={20} onClick={() => openModal(task)} />
-                    <CiEdit size={20} onClick={()=>{openEditModel(task)}} />
-                    <MdDelete size={20} onClick={()=>{(openWarningModel(task))}} /></div></td>
+                    <CiEdit size={20} onClick={() => { openEditModel(task) }} />
+                    <MdDelete size={20} onClick={() => { (openWarningModel(task)) }} /></div></td>
                 </tr>
               ))}
             </tbody>
@@ -180,9 +227,9 @@ const ProjectDetails = () => {
         onClose={() => setShowTaskModal(false)}
         task={selectedTask} />
 
-      <EditTask isOpen={showEditModel} onClose={()=>{setshowEditModel(false)}} task={editTask}/>
+      <EditTask isOpen={showEditModel} onClose={() => { setshowEditModel(false) }} task={editTask} />
 
-      <WarningModel isOpen={showWarningModel} onClose={()=>{setShowWarningModel(false)}} task={deleteTask}/>
+      <WarningModel isOpen={showWarningModel} onClose={() => { setShowWarningModel(false) }} task={deleteTask} />
     </div>
   );
 };

@@ -9,9 +9,6 @@ const Navbar = () => {
   useEffect(() => {
     const token = JSON.parse(localStorage.getItem("token"))?.token;
     const name = JSON.parse(localStorage.getItem("token"))?.name;
-    if (token) {
-      setShowDashboardLink(true);
-    }
   }, []);
 
 
