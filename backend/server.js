@@ -15,7 +15,9 @@ const port = process.env.PORT || 3000
 
 // middelwares
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+    origin:"https://task-tracker-app-exng.onrender.com"
+}))
 
 
 //routes
