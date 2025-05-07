@@ -17,9 +17,9 @@ const port = process.env.PORT || 3000
 app.use(express.json())
 app.use(cors({
     origin: "https://task-tracker-app-theta.vercel.app",
-    methods: "GET,POST,PUT,DELETE",
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
-}))
+}));
 
 
 //routes
