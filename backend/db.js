@@ -1,11 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv"
 
-app.use(cors({
-    origin: "https://task-tracker-app-theta.vercel.app", // ✅ No trailing slash
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-}));
+dotenv.config();
 
 
 const connectDB = async () => {
