@@ -16,19 +16,21 @@ const port = process.env.PORT || 3000
 // middelwares
 app.use(express.json())
 app.use(cors({
-    origin:"https://task-tracker-app-exng.onrender.com"
+    origin: "https://task-tracker-app-exng.onrender.com",
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true,
 }))
 
 
 //routes
-app.use('/api/auth',authRoutes) //login and signin routes
-app.use('/project',projectRoutes)//route for create and get project details routes
-app.use('/tasks',taskRoutes)
+app.use('/api/auth', authRoutes) //login and signin routes
+app.use('/project', projectRoutes)//route for create and get project details routes
+app.use('/tasks', taskRoutes)
 
-app.get('/',(req,res)=>{
+app.get('/', (req, res) => {
     res.send("hellow world")
 })
 
-app.listen(port,()=>{
+app.listen(port, () => {
     console.log(` Server running on port ${port}`);
 })
