@@ -31,3 +31,22 @@ export const getProjects = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
+
+
+export const updateProject = async(req,res)=>{
+    try{
+        const {name,projectName} = req.params;
+        const {newTitle} = req.body
+        const projectDetails = await Project.findOne({user:name,title:projectName})
+
+        if(!projectDetails){
+            return res.status(404).json({message:"project not found"})
+        }
+
+        projectDetails.title = newTitle
+        await projectDetails.save();
+        res.status(200).json({message:"project update successfully"})
+    }catch(err){
+        res.status(500).json({message:"error while updating the project"})
+    }
+}
