@@ -18,7 +18,7 @@ Tracks task creation and completion dates
 Multi-user support
 
 
-git clone https://github.com/your-username/task-tracker.git
+git clone https://github.com/vatsal633/Task-Tracker-App.git
 cd task-tracker
 
 cd backend
